@@ -1,6 +1,6 @@
 ---
 name: remotion-production
-description: Build, refine, debug, and verify polished Remotion videos in React, especially explainer videos, scene-based tutorials, sprite-sheet animations, and asset-driven compositions. Use when Codex needs to plan a Remotion timeline, implement deterministic frame-based motion, crop and stabilize irregular sprite frames, synchronize on-screen diagnostics, add transitions or full-length audio, fix transparent seams or delayRender failures, reduce render memory pressure, or validate exported MP4 audio/video streams.
+description: Build, refine, debug, and verify polished Remotion videos in React, especially explainer videos, scene-based tutorials, sprite-sheet animations, and asset-driven compositions. Use when Codex needs to plan a Remotion timeline, implement deterministic frame-based motion, crop and stabilize irregular sprite frames, synchronize on-screen diagnostics, add transitions, select and trim background-music excerpts, mix full-length audio, fix transparent seams or delayRender failures, reduce render memory pressure, or validate exported MP4 audio/video streams.
 ---
 
 # Remotion Production
@@ -66,9 +66,11 @@ Keep decorative effects subordinate to the explanation. A transition should conc
 
 ### 6. Add and mix audio
 
-Reference local audio with `staticFile()`. Cover the full composition by choosing a long-enough track, looping intentionally, or trimming intentionally. Use a frame-based volume callback for fades and keep background music low enough for narration or instructional text.
+Reference local audio with `staticFile()`. Cover the full composition by choosing a long-enough track, looping intentionally, or trimming intentionally. For a user-provided long track, inspect its duration, silence, and loudness, then place only the required excerpt in `public/audio/`. Choose a musically natural boundary rather than relying on loudness alone.
 
-Do not declare audio complete from Studio preview alone. Verify the exported file contains an audio stream.
+Use a frame-based volume callback for fades and keep background music low enough for narration or instructional text. Avoid baking fades into the excerpt when Remotion already owns the volume envelope.
+
+Do not declare audio complete from Studio preview alone. Verify the exported file contains a measurably non-silent audio stream.
 
 ### 7. Validate in increasing scope
 
@@ -98,6 +100,6 @@ Do not claim completion until:
 - scene cuts never expose transparent or checkerboard artifacts;
 - media assets load without leaked render handles;
 - a full render succeeds at a stable concurrency;
-- the exported file has the expected duration and required audio/video streams.
+- the exported file has the expected duration, required audio/video streams, and non-silent audio when music is requested.
 
 Report the output path, render command, verification result, and any intentionally reduced concurrency.
