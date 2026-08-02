@@ -1,6 +1,6 @@
 ---
 name: remotion-production
-description: Build, refine, debug, and verify polished Remotion videos in React, especially explainer videos, scene-based tutorials, sprite-sheet animations, and asset-driven compositions. Use when Codex needs to plan a Remotion timeline, implement deterministic frame-based motion, crop and stabilize irregular sprite frames, synchronize on-screen diagnostics, add transitions, select and trim background-music excerpts, mix full-length audio, fix transparent seams or delayRender failures, reduce render memory pressure, or validate exported MP4 audio/video streams.
+description: Build, refine, debug, verify, and package polished Remotion videos in React, especially explainer videos, scene-based tutorials, sprite-sheet animations, and asset-driven compositions. Use when Codex needs to plan a Remotion timeline, implement deterministic frame-based motion, crop and stabilize irregular sprite frames, synchronize on-screen diagnostics, add transitions, select background-music excerpts, fix render failures, validate exported media, or directly provide users with cover-image generation prompts and short-video descriptions based on the finished composition.
 ---
 
 # Remotion Production
@@ -12,6 +12,7 @@ Build Remotion videos as deterministic frame renderers. Treat asset geometry, vi
 - For sprite-sheet extraction, frame bleed, off-center subjects, truncated artwork, or unnatural loops, read [references/sprite-sheets.md](references/sprite-sheets.md).
 - For composition structure, scene timing, live coordinate panels, or transition design, read [references/scene-architecture.md](references/scene-architecture.md).
 - For asset loading, audio, `delayRender` failures, out-of-memory renders, or export verification, read [references/rendering-and-audio.md](references/rendering-and-audio.md).
+- For cover-image prompts, thumbnail direction, short-video descriptions, or publishing hashtags, read [references/publishing-copy.md](references/publishing-copy.md).
 
 Read only the references relevant to the request. Inspect the installed Remotion version before choosing imports because older projects may expose media components from `remotion`, while current projects use `@remotion/media`.
 
@@ -90,6 +91,12 @@ node /path/to/remotion-production/scripts/verify-render.mjs out/video.mp4 --requ
 
 Treat a partial or failed output as invalid even if a file exists at the destination.
 
+### 8. Prepare publishing copy when requested
+
+Base cover prompts and video descriptions on the final composition, verified subject, teaching points, visual style, duration, and audience. Output these deliverables directly in the user conversation. Do not create prompt or description files, call an image-generation tool, or generate a cover image unless the user explicitly asks for those actions.
+
+Follow [references/publishing-copy.md](references/publishing-copy.md). Make the result ready to copy, concise for the target platform, and written in the user's language.
+
 ## Completion standard
 
 Do not claim completion until:
@@ -101,5 +108,6 @@ Do not claim completion until:
 - media assets load without leaked render handles;
 - a full render succeeds at a stable concurrency;
 - the exported file has the expected duration, required audio/video streams, and non-silent audio when music is requested.
+- requested cover prompts and publishing descriptions accurately reflect the final video and are delivered directly in the conversation.
 
 Report the output path, render command, verification result, and any intentionally reduced concurrency.

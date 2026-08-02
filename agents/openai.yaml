@@ -1,4 +1,4 @@
 interface:
   display_name: "Remotion Production"
-  short_description: "Build and debug polished Remotion explainer videos"
-  default_prompt: "Use $remotion-production to build and verify a polished Remotion explainer video."
+  short_description: "Build, verify, and package polished Remotion videos"
+  default_prompt: "Use $remotion-production to build, verify, and prepare publishing copy for a polished Remotion video."
