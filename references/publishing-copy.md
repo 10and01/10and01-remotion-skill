@@ -4,6 +4,8 @@
 
 Treat cover prompts and publishing descriptions as conversation deliverables. Return them directly in the final response so the user can copy them.
 
+If the user asks to design or add a cover inside the Remotion project, this reference is not sufficient. Follow [covers-and-endings.md](covers-and-endings.md) and implement the composition. Use this reference only when they request a prompt, thumbnail direction, description, or hashtags.
+
 - Do not create `.txt`, Markdown, JSON, or project files for this copy unless the user asks.
 - Do not call image generation merely because the user requests a prompt.
 - Do not claim a cover was generated when only a prompt was written.

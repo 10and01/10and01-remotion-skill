@@ -4,6 +4,8 @@
 
 Represent scenes as data or named constants. Check that their durations sum to the composition duration. Remember that `useCurrentFrame()` inside a `Sequence` is local to that sequence.
 
+Derive displayed total time, footer progress, and cut markers from the same duration constants. Do not leave a hard-coded footer duration after extending or trimming the composition.
+
 Premount sequences when supported by the installed Remotion version, especially scenes with fonts or media. Use `Series` for contiguous scenes and `Sequence` when explicit placement or overlap is clearer.
 
 ## Drive all rendered state from frames
@@ -48,6 +50,8 @@ const intensity = interpolate(
 Use this intensity for a darkening layer, a restrained light sweep, or a thin scan line. Keep `pointerEvents: 'none'`, set an intentional `zIndex`, and clip the overlay to the composition.
 
 Use `TransitionSeries` when the project already includes `@remotion/transitions` and overlapping scene timing is desired. Recalculate total duration because transitions overlap adjacent scenes; overlays do not shorten the timeline.
+
+Render boundary stills at the last frame before a cut, the cut frame, and several frames after it. Avoid combining a long outgoing fade with a slow incoming fade when that creates an unintended blank or muddy double-exposure interval. Prefer one clearly owned transition mechanism per cut.
 
 ## Make explanation scenes truthful
 

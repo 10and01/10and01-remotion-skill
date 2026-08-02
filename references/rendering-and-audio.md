@@ -99,10 +99,13 @@ If needed, lower concurrency to `1`. Persist the stable value in the project's b
 
 ## Verify the final container
 
-Run the bundled verifier:
+Run the bundled verifier. State the expected geometry and audio intent explicitly:
 
 ```bash
-node /path/to/remotion-production/scripts/verify-render.mjs out/video.mp4 --require-audio --expect-duration 35 --tolerance 0.25
+node /path/to/remotion-production/scripts/verify-render.mjs out/video.mp4 \
+  --expect-duration 35 --tolerance 0.25 \
+  --expect-width 1920 --expect-height 1080 \
+  --expect-video-codec h264 --require-audible-audio
 ```
 
 Alternatively inspect the container directly with FFprobe:
@@ -113,7 +116,7 @@ ffprobe -v error \
   -of default=noprint_wrappers=1 out/video.mp4
 ```
 
-Require a successful render exit, expected duration, at least one video stream, and an audio stream whenever audio is part of the request.
+Require a successful render exit, expected duration, expected dimensions and codec, at least one video stream, and an audio stream whenever audio is part of the request.
 
 Confirm that the stream contains audible samples rather than silence:
 
@@ -123,3 +126,5 @@ ffmpeg -i out/video.mp4 -map 0:a:0 \
 ```
 
 Reject the result when `mean_volume` is `-inf`, the decoded sample count is zero, or the measured level is inconsistent with the intended background mix.
+
+Some render pipelines create an AAC stream containing digital silence even when the composition has no requested music. Do not infer that a video is audible from stream presence alone. Use `--expect-silent` when silence is intentional; it accepts either no audio stream or a stream whose measured maximum stays at or below the verifier's silence threshold.

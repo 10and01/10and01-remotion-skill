@@ -1,6 +1,6 @@
 ---
 name: remotion-production
-description: Build, refine, debug, verify, and package polished Remotion videos in React, especially explainer videos, scene-based tutorials, sprite-sheet animations, and asset-driven compositions. Use when Codex needs to plan a Remotion timeline, implement deterministic frame-based motion, crop and stabilize irregular sprite frames, synchronize on-screen diagnostics, add transitions, select background-music excerpts, fix render failures, validate exported media, or directly provide users with cover-image generation prompts and short-video descriptions based on the finished composition.
+description: Build, refine, debug, verify, and package polished Remotion videos in React, especially explainer videos, scene-based tutorials, sprite-sheet animations, and asset-driven compositions. Use when Codex needs to plan a Remotion timeline, implement deterministic frame-based motion, crop and stabilize irregular sprite frames, synchronize on-screen diagnostics, design an actual opening cover or branded ending, export standalone cover artwork, add transitions, select background-music excerpts, fix render failures, validate exported media, or provide cover-image generation prompts and short-video descriptions based on the finished composition.
 ---
 
 # Remotion Production
@@ -11,6 +11,7 @@ Build Remotion videos as deterministic frame renderers. Treat asset geometry, vi
 
 - For sprite-sheet extraction, frame bleed, off-center subjects, truncated artwork, or unnatural loops, read [references/sprite-sheets.md](references/sprite-sheets.md).
 - For composition structure, scene timing, live coordinate panels, or transition design, read [references/scene-architecture.md](references/scene-architecture.md).
+- For an in-video opening cover, standalone thumbnail composition, branded ending, or final hold, read [references/covers-and-endings.md](references/covers-and-endings.md).
 - For asset loading, audio, `delayRender` failures, out-of-memory renders, or export verification, read [references/rendering-and-audio.md](references/rendering-and-audio.md).
 - For cover-image prompts, thumbnail direction, short-video descriptions, or publishing hashtags, read [references/publishing-copy.md](references/publishing-copy.md).
 
@@ -25,7 +26,8 @@ Inspect the existing project before editing. Record:
 - composition ID, width, height, FPS, and duration;
 - scene boundaries and whether frames are global or local to a `Sequence`;
 - source asset dimensions, transparency, frame metadata, and audio duration;
-- required output codec, destination, and available render resources.
+- required output codec, destination, and available render resources;
+- whether the deliverables include an opening cover scene, standalone cover image, ending card, audible audio, intentional silence, or publishing copy.
 
 Preserve unrelated working-tree changes. Prefer a small targeted change over restructuring a working project.
 
@@ -53,6 +55,8 @@ Use the same computed current-frame object for:
 
 This prevents a correct animation with stale explanatory UI.
 
+When showing a filmstrip, generate a window that contains the exact current frame. Do not highlight the nearest sampled frame while rendering a different crop.
+
 ### 4. Stabilize the main subject
 
 Use a fixed viewport for the animation. Crop the exact source rectangle first, then translate that cropped frame inside the viewport using a per-frame visual anchor or visible-content box. Do not center only the raw cell rectangle when the artwork shifts inside cells.
@@ -64,6 +68,8 @@ For sprite sheets, verify every edge frame and any frame containing long extremi
 Give the composition a persistent opaque base background outside all scene sequences. Scene backgrounds may remain opaque as well. Apply transitions as frame-driven overlays above the scenes and below any final vignette or safety overlay.
 
 Keep decorative effects subordinate to the explanation. A transition should conceal a cut, not reveal transparency, checkerboards, neighboring sprite cells, or unmounted content.
+
+When the request includes a cover or ending, implement them as first-class scenes and render a standalone cover composition when useful. Follow [references/covers-and-endings.md](references/covers-and-endings.md). Do not substitute a cover-generation prompt for an actual Remotion cover unless the user asked only for a prompt.
 
 ### 6. Add and mix audio
 
@@ -78,7 +84,7 @@ Do not declare audio complete from Studio preview alone. Verify the exported fil
 Run checks in this order:
 
 1. Type-check the project.
-2. Render stills at the intro, each cut, representative sprite frames, and the final fade.
+2. Render stills at the cover, both sides of each cut, representative sprite frames, the ending entrance, and the final hold.
 3. Render the full composition.
 4. If Chrome exhausts RAM or temporary disk, reduce render concurrency before changing application code.
 5. Inspect the final container for duration, video stream, and required audio stream.
@@ -86,7 +92,7 @@ Run checks in this order:
 Use the bundled verifier after export:
 
 ```bash
-node /path/to/remotion-production/scripts/verify-render.mjs out/video.mp4 --require-audio --expect-duration 35
+node /path/to/remotion-production/scripts/verify-render.mjs out/video.mp4 --expect-duration 35 --expect-width 1920 --expect-height 1080 --expect-video-codec h264 --require-audible-audio
 ```
 
 Treat a partial or failed output as invalid even if a file exists at the destination.
@@ -108,6 +114,8 @@ Do not claim completion until:
 - media assets load without leaked render handles;
 - a full render succeeds at a stable concurrency;
 - the exported file has the expected duration, required audio/video streams, and non-silent audio when music is requested.
+- requested cover and ending scenes are visually checked at full state, transition boundaries, and the final frame;
+- standalone cover artwork includes its own opaque background and matches the video hierarchy;
 - requested cover prompts and publishing descriptions accurately reflect the final video and are delivered directly in the conversation.
 
 Report the output path, render command, verification result, and any intentionally reduced concurrency.

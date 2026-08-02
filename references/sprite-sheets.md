@@ -39,6 +39,17 @@ If the sheet has gutters, padding, trimmed frames, or exporter metadata, use tho
 
 If visible artwork genuinely crosses its true cell boundary, re-export the sheet with sufficient padding or extrude settings. Do not widen the runtime crop into a neighboring cell; that trades truncation for frame bleed.
 
+## Measure the sheet before authoring the timeline
+
+Record the source width, height, row and column count, exact cell edges, alpha bounds, and empty cells before building scenes. Distinguish these quantities:
+
+- total grid cells;
+- non-empty detected cells;
+- enabled playback frames;
+- authored playback-sequence length after repeats or ping-pong steps.
+
+Do not label all grid cells as enabled frames when leading or trailing cells are empty. A small local analysis script using Sharp or Canvas is appropriate when it reports geometry and alpha bounds without modifying the source asset.
+
 ## Crop with two nested windows
 
 Use a fixed outer viewport and an inner exact crop. Render the complete sheet with Remotion's `Img` component inside the crop:
@@ -121,6 +132,10 @@ Start around 4–8 sprite FPS for readable character motion, then tune by viewin
 
 Derive the crop, highlighted cell, frame label, and coordinate JSON from one current-frame calculation. Never place initial coordinates in static markup if the scene demonstrates animation.
 
+For a filmstrip, derive a contiguous window around the current source index and highlight that exact index. A sparse sample strip with a “nearest” highlighted cell is visually plausible but factually wrong.
+
+When the animation uses a fixed viewport, scale the crop proportionally with one shared scale such as `Math.min(viewportW / rect.w, viewportH / rect.h)`. Do not stretch source cells independently to fill the viewport.
+
 ## Visual QA
 
 Inspect at least:
@@ -130,5 +145,7 @@ Inspect at least:
 - frames with the widest or tallest visible content;
 - the last-to-first loop boundary;
 - the output at its actual display scale.
+
+For large sheets, add a temporary QA composition that lays out the first and last valid frames plus the left and right edge frame of every source row. This makes neighbor bleed and truncated edge content visible in one still.
 
 Reject the result if neighboring pixels appear for even one frame, an extremity is shortened, or the subject center visibly wanders without intentional body motion.
